@@ -1,0 +1,2 @@
+# GDM1000_monochromator_automatization
+Automatization of Carl Zeiss GDM1000 monochromator
