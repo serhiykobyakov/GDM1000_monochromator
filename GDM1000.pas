@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, dialogs, StdCtrls, Controls, Forms,
 //  strutils,
+  Math,
   IniFiles,
   addfunc,
   ArduinoDevice;
@@ -25,32 +26,37 @@ type
 
       function GetOrder: byte;
       procedure SetOrder(AValue: byte);
+      function GetPos: longint;
       function GetPosCm: Real;
       function GetPosNm: Real;
+      procedure SetPos(pos: longint);
+      procedure GoToPos(pos: longint);
+      function Pos2Cm(pos: Integer): Real;
+      function Pos2Nm(pos: Integer): Real;
+      function Cm2Pos(posCm: Real): Integer;
+      function Nm2Pos(posNm: Real): Integer;
+      function InRange(pos: Longint): boolean;
+      function SendAndGet(str: string): string;
+      function GetMaxPos: longint;
 
     public
       constructor Init(_ComPort: string);
       destructor Done;
 
-      function GoToPos(pos: longint): longint;
+      function GetStepRangeCm(steps: Integer): Real;
+      procedure GoStepsForward(steps: Integer);
+      procedure GoToCm(posCm: Real);
       procedure JumpForward;
-      procedure SetPos(pos: longint);
       procedure ManualSetPos;
-      function Pos2Cm(pos: Integer): Real;
-      function Cm2Pos(posCm: Real): Integer;
-      function Nm2Pos(posNm: Real): Integer;
-      function InRange(pos: Longint): boolean;
       function InRangeCm(posCm: Real): boolean;
-      function InRangeNm(posNm: Real): boolean;
-
-      // for testing purpouses
-      // must be removed before the first release
-      function GetPos: longint;
-      function SendAndGet(str: string): string;
-      function GetMaxPos: longint;
 
       property Order: byte Read GetOrder Write SetOrder;
       property PositionCm: Real Read GetPosCm;
+
+// preliminary nanometers mode
+// it is not tested nor finished yet
+      procedure GoToNm(posNm: Real);
+      function InRangeNm(posNm: Real): boolean;
       property PositionNm: Real Read GetPosNm;
 
   end;
@@ -64,6 +70,7 @@ begin
 end;
 
 procedure GDM_device.SetOrder(AValue: byte);
+// set the reflection order
 begin
   if (AValue = 1) or (AValue = 2) then fOrder := AValue
   else showmessage(theDeviceID + ':' + LineEnding +
@@ -170,8 +177,14 @@ begin
   Inherited Done;
 end;
 
+procedure GDM_device.GoStepsForward(steps: Integer);
+// jump forward for certain number of steps
+begin
+  GoToPos(fPos + steps);
+end;
 
-function GDM_device.GoToPos(pos: longint): longint;
+
+procedure GDM_device.GoToPos(pos: longint);
 // go to exact position (motor positions)
 var
   answer: Longint;
@@ -185,7 +198,28 @@ begin
                           'got answer: ' + IntToStr(answer))
       else fPos := answer;
     end;
-  Result := fPos;
+end;
+
+procedure GDM_device.GoToCm(posCm: Real);
+// go to exact position (cm-1)
+begin
+  if InRangeCm(posCm) then
+      GoToPos(Cm2Pos(posCm))
+  else
+    showmessage(theDeviceID + ':' + LineEnding +
+                'procedure: GoToCm' + LineEnding +
+                'argument out of range: ' + FloatToStr(posCm)+ ' cm-1');
+end;
+
+procedure GDM_device.GoToNm(posNm: Real);
+// go to exact position (nm)
+begin
+  if InRangeNm(posNm) then
+      GoToPos(Nm2Pos(posNm))
+  else
+    showmessage(theDeviceID + ':' + LineEnding +
+                'procedure: GoToNm' + LineEnding +
+                'argument out of range: ' + FloatToStr(posNm)+ ' nm');
 end;
 
 
@@ -214,8 +248,10 @@ begin
 end;
 
 procedure GDM_device.ManualSetPos;
+// Initialization of the device!
 // set position manually
-// very useful, allow to skip manual crank rotation when setting the device!!!
+// also very useful in changing the device position,
+// allow to skip manual crank rotation when setting the device!!!
 var
   posNow, posTogo: Integer;
   posCmNow, posCmTogo: Real;
@@ -242,21 +278,40 @@ end;
 
 function GDM_device.Pos2Cm(pos: Integer): Real;
 // convert stepper position to cm-1
+// (17550 - 7500)/208307 = 0.048246098306826
 begin
-  Result := 7500 + pos*0.048246098306826
+  if fOrder = 1 then
+    Result := 7500 + pos*0.048246098306826
+  else if fOrder = 2 then
+  Result := 2*(7500 + pos*0.048246098306826)
+  else Result := 0;
+end;
+
+function GDM_device.Pos2Nm(pos: Integer): Real;
+begin
+  Result := 1e7 / Pos2Cm(pos);
 end;
 
 function GDM_device.Cm2Pos(posCm: Real): Integer;
 // convert stepper position in cm-1
 begin
-  Result := Round((posCm - 7500)*208307 / (17550 - 7500));
+  if posCm > 0 then
+    if fOrder = 1 then
+      Result := Round((posCm - 7500) / 0.048246098306826)
+    else if fOrder = 2 then
+      Result := Round((posCm - 15000) / ( 2 * 0.048246098306826))
+  else Result := 1;
 end;
 
 function GDM_device.Nm2Pos(posNm: Real): Integer;
 // convert stepper position in nm
 begin
   if posNm > 0 then
-    Result := Round((1e7 / posNm - 7500)*208307 / (17550 - 7500))
+    if fOrder = 1 then
+      Result := Round((1e7 / posNm - 7500) / 0.048246098306826)
+    else if fOrder = 2 then
+      Result := Round((1e7 / posNm - 15000) / ( 2 * 0.048246098306826))
+    else Result := 1
   else Result := 1;
 end;
 
@@ -269,15 +324,14 @@ end;
 function GDM_device.GetPosCm: Real;
 // Return actual position in cm-1
 begin
-// (17550 - 7500)/208307 = 0.048246098306826
-  Result := 7500 + fPos*0.048246098306826
+  Result := RoundTo(Pos2Cm(fPos), -2);
 end;
 
 
 function GDM_device.GetPosNm: Real;
 // Return actual position in nm
 begin
-  Result := 1e7 / GetPosCm;
+  Result := RoundTo(1e7 / Pos2Cm(fPos), -3);
 end;
 
 function GDM_device.GetMaxPos: longint;
@@ -312,6 +366,13 @@ begin
   else
     if (posNm <= 1e7 / fMinPoscm2) and (posNm >= 1e7 / fMaxPoscm2) then Result := True
     else Result := False;
+end;
+
+function GDM_device.GetStepRangeCm(steps: Integer): Real;
+begin
+  if steps > 0 then
+    Result := RoundTo(Pos2Cm(steps) - Pos2Cm(0), -2)
+  else Result := 0;
 end;
 
 function GDM_device.SendAndGet(str: string): string;
