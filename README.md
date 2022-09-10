@@ -4,7 +4,7 @@
 
 ## What is it
 
-Long story short: I attached a stepper motor to monochromator and it can be positioned using PC.
+Long story short: I attached a stepper motor to monochromator and now it can be positioned using PC instead of old-fashion manual control.
 
 Here I have only the software without all the other stuff (circuitry and mechanic stuff). Arduino sketch and Free Pascal unit for GDM1000 monochromator.
 
