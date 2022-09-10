@@ -229,7 +229,7 @@ procedure GDM_device.SetPos(pos: longint);
 var
   answer: string;
 begin
-  if (fPos <= fMaxPos) then
+  if (pos <= fMaxPos) then
     begin
       fPos := pos;
       answer := Trim(SendAndGetAnswer('s' + InttoStr(pos)));
