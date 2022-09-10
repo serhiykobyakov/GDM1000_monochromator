@@ -23,7 +23,8 @@ The software has been tested for errors, stability and speed.
 
 1. Download GDM1000.pas and GDM1000.ini
 2. Get ArduinoDevice.pas from [my Arduino device repository](https://github.com/serhiykobyakov/Arduino_device_FPC) 
-3. Use repository info and and see the comments in files to get it work
+3. Put in your directory jedi.inc, synafpc.pas, synaser.pas, synautil.pas from [Synapse repository](http://synapse.ararat.cz/doku.php/download)
+4. Use repository info and and see the comments in files to get it work
 
 ## Contact
 For reporting [bugs, suggestions, patches](https://github.com/serhiykobyakov/GDM1000_monochromator_automatization/issues)
