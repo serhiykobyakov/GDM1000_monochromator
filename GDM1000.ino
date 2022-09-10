@@ -1,8 +1,8 @@
 // GDM1000
-// -*- mode: C++ -*-
+// Version 10.09.2022
 //
 // Copyright (C) 2019 Serhiy Kobyakov
-// $Id:  $
+
 #include <AccelStepper.h>
 
 // Stepper motor
