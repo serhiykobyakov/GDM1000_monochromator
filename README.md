@@ -17,7 +17,7 @@ The software has been tested for errors, stability and speed.
 1. Make directory "GDM1000" in the sketchbook directory on your PC (it is "Arduino" by default, check the preferences in Arduino IDE).
 2. Put the GDM1000.ino into "GDM1000" directory.
 3. Open Arduino IDE and set your Arduino board
-4. Check the sketch for errors and upload the sketch to the board.
+4. Compile the sketch and upload it to the board.
 
 ### Free Pascal
 
