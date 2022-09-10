@@ -1,5 +1,7 @@
 # Automatization of Carl Zeiss GDM1000 monochromator
 
+![Alt Text](https://github.com/serhiykobyakov/GDM1000_monochromator/blob/main/GDM1000.jpg)
+
 ## What is it
 Arduino sketch and Free Pascal unit for GDM1000 monochromator.
 
