@@ -1,11 +1,12 @@
-# Automatization of Carl Zeiss GDM1000 monochromator
+# Carl Zeiss GDM1000 monochromator automatization
 
 ![Alt Text](https://github.com/serhiykobyakov/GDM1000_monochromator/blob/main/GDM1000.jpg)
 
 ## What is it
-Arduino sketch and Free Pascal unit for GDM1000 monochromator.
 
-Here I have only the software without all the other stuff (circuitry and mechanic stuff).
+Long story short: I attached a stepper motor to monochromator and it can be positioned using PC.
+
+Here I have only the software without all the other stuff (circuitry and mechanic stuff). Arduino sketch and Free Pascal unit for GDM1000 monochromator.
 
 The software has been tested for errors, stability and speed.
 
