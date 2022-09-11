@@ -1,7 +1,7 @@
-// GDM1000
-// Version 10.09.2022
+// GDM1000 monochromator
+// Version: 11.09.2022
 //
-// Copyright (C) 2019 Serhiy Kobyakov
+// (c) Serhiy Kobyakov
 
 #include <AccelStepper.h>
 
@@ -37,8 +37,10 @@ void setup()
   delay(20);
   digitalWrite(Buzzer, LOW); 
   if (digitalRead(R_end) || digitalRead(L_end)) HitEndstop();
-//  Serial.println("Ready!");
+  
+  Serial.println("Ready!");
 }
+
 
 void beepn(int times) {
   for (int i = 0; i < times; i++) {
@@ -49,6 +51,7 @@ void beepn(int times) {
   }
 }
 
+
 void beepE(int times) {
   for (int i = 0; i < times; i++) {
     digitalWrite(Buzzer, HIGH);
@@ -57,6 +60,7 @@ void beepE(int times) {
     delay(400);
   }
 }
+
 
 void goTo() {
   if (Serial.available() > 0) {
@@ -79,6 +83,7 @@ void goTo() {
   } // end of Serial.available() > 0
 }
 
+
 void HitEndstop() {
   stepper.stop();
   stepper.setSpeed(0);
@@ -93,6 +98,7 @@ void HitEndstop() {
   }
   */
 }
+
 
 void loop() {
   if (digitalRead(R_end) || digitalRead(L_end)) HitEndstop();
@@ -145,3 +151,5 @@ void loop() {
     }
   }
 }
+
+ 

@@ -1,6 +1,10 @@
 unit GDM1000;
+{
+Carl Zeiss GDM1000 monochromator unit
+Version 11.09.2022
 
-{$mode objfpc}{$H+}
+(c) Serhiy Kobyakov
+}
 
 interface
 
@@ -86,18 +90,18 @@ var
   AppIni: TIniFile;
 begin
 // -----------------------------------------------------------------------------
+// first things first
 // the device ID string with which it responds to '?'
   theDeviceID := 'GDM1000';
-  iniFile := Application.Location + theDeviceID + '.ini';
 // -----------------------------------------------------------------------------
 
   iniFile := Application.Location + theDeviceID + '.ini';
   If not FileExists(iniFile) then
     begin
       showmessage(theDeviceID + ':' + LineEnding +
-                  'File ' + LineEnding + iniFile + LineEnding +
-                  'has not been found!' + LineEnding + LineEnding +
-                  'Please fix it');
+          'procedure ''' + {$I %CURRENTROUTINE%} + ''' failed!' + LineEnding +
+          'File ' + iniFile + 'has not been found!' + LineEnding +
+          'Please fix it');
       halt(0);
     end;
 
@@ -125,6 +129,7 @@ begin
 // -----------------------------------------------------------------------------
 // Read the device variables from ini file:
   AppIni := TInifile.Create(iniFile);
+{
   theComPortSpeed := AppIni.ReadInteger(theDeviceID, 'ComPortSpeed', 115200);
 
 // max time in ms the device may take for its internal initialization
@@ -138,9 +143,8 @@ begin
 // max time in ms the device may take before answer
 // in the case of simple and fast queries
   theReadTimeout := AppIni.ReadInteger(theDeviceID, 'ReadTimeout', 1000);
-
-// other device-specific paremeters must be found in the ini-file
-// and we read them here:
+}
+// device-specific paremeters:
 
   fMaxPos := StrToInt(AppIni.ReadString(theDeviceID, 'MaxPos', '0'));
   fMinPoscm1 := AppIni.ReadFloat(theDeviceID, 'MinPoscm1', 0);
