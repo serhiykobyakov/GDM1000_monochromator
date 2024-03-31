@@ -10,22 +10,6 @@ Here I have only the software without all the other stuff (circuitry and mechani
 
 The software has been tested for errors, stability and speed.
 
-## Install
-
-### Arduino
-
-1. Make directory "GDM1000" in the sketchbook directory on your PC (it is "Arduino" by default, check the preferences in Arduino IDE).
-2. Put the GDM1000.ino into "GDM1000" directory.
-3. Open Arduino IDE and set your Arduino board
-4. Compile the sketch and upload it to the board.
-
-### Free Pascal
-
-1. Download GDM1000.pas and GDM1000.ini
-2. Get ArduinoDevice.pas from [my Arduino device repository](https://github.com/serhiykobyakov/Arduino_device_FPC) 
-3. Put in your directory jedi.inc, synafpc.pas, synaser.pas, synautil.pas from [Synapse repository](http://synapse.ararat.cz/doku.php/download)
-4. Use repository info and and see the comments in files to get it work
-
 ## Contact
 For reporting [bugs, suggestions, patches](https://github.com/serhiykobyakov/GDM1000_monochromator_automatization/issues)
 
